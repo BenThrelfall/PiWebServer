@@ -1,0 +1,98 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <h2>@Model.usedStorage GB / @Model.totalStorage GB</h2>
+    <hr />
+    <h2>Now Playing: @Model.currentTitle</h2>
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-auto">
+            <h3>@Model.currentTime / @Model.currentLength</h3>
+        </div>
+        <div class="col-auto">
+            <form method="post" onsubmit="AJAXSubmit(this);return false;">
+                <input type="hidden" name="skip" value="-10"/>
+                <button type="submit" class="btn btn-secondary">◁◁</button>
+            </form>
+        </div>
+        <div class="col-auto">
+            <form method="post" onsubmit="AJAXSubmit(this);return false;">
+                <input type="hidden" name="cmd" value="play"/>
+                <button type="submit" class="btn btn-secondary">▷</button>
+            </form>
+        </div>
+        <div class="col-auto">
+            <form method="post" onsubmit="AJAXSubmit(this);return false;">
+                <input type="hidden" name="cmd" value="pause"/>
+                <button type="submit" class="btn btn-secondary">II</button>
+            </form>
+        </div>
+        <div class="col-auto">
+            <form method="post" onsubmit="AJAXSubmit(this);return false;">
+                <input type="hidden" name="skip" value="10"/>
+                <button type="submit" class="btn btn-secondary">▷▷</button>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <form method="post" class="row g-2 m-2" onsubmit="AJAXSubmit(this);return false;">
+        <div class="col">
+            <input type="text" class="form-control" name="cmd" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+
+    <div class="container">
+    @for (int i = 0; i < Model.mediaFiles.Count; i+=4) {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+        @for(int j = 0; j<4; j++) {
+            if (i + j >= Model.mediaFileNames.Count) {
+                break;
+            }
+                <div class="col">
+                    <div class="card mx-auto m-2 shadow" style="width: 18rem; height: 9rem;">
+                      <div class="card-body">
+                        <h5 class="card-title overflow-hidden" style="height: 4rem;">@Model.mediaFileNames[i + j]</h5>
+                        <form method="post" onsubmit="AJAXSubmit(this);return false;"><input type="hidden" name="play" value="@Model.mediaFiles[i+j]"/><button type="submit" class="btn btn-primary">Play</button></form>
+                      </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    </div>
+
+</div>
+
+<script>
+
+  async function AJAXSubmit (oFormElement) {
+    var resultElement = oFormElement.elements.namedItem("result");
+    const formData = new FormData(oFormElement);
+
+    try {
+    const response = await fetch(oFormElement.action, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      window.location.href = '/';
+    }
+
+    resultElement.value = 'Result: ' + response.status + ' ' + 
+      response.statusText;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+</script>

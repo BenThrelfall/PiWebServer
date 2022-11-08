@@ -1,0 +1,11 @@
+﻿@page
+@model WebCore.Pages.PlayerModel
+@{
+    ViewData["Title"] = "Player";
+}
+
+<div class="text-center">
+        <h1 class="display-4">Player</h1>
+        <h2>@Model.currentTitle</h2>
+        <h2>@Model.currentTime / @Model.currentLength</h2>
+</div>
